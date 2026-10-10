@@ -13,5 +13,17 @@ s=M.preset(0);s.cargo[0].salt=-1;assert.equal(M.calculate(s).valid,false);
 s=M.preset(0);s.cargo[0].bsw=null;assert.equal(M.calculate(s).valid,false);
 s=M.preset(0);s.cargo[0].salt=2;s.cargo[1].salt=2;s.cargo[2].salt=2;s.efficiency=0;assert.equal(M.calculate(s).saltPass,false);
 s=M.preset(0);s.verification={compatibility:'pass',tan:'pass',metal:'pass',bsw:0.049};assert.equal(M.calculate(s).verification,'pass');s.verification.bsw=0.05;assert.equal(M.calculate(s).verification,'fail');s.verification.bsw=null;assert.equal(M.calculate(s).verification,'pending');
-console.log('PASS: 3 demo scenarios, supply formulas, zero light, invalid inputs, strict salt/BS&W limits, independent verification.');
+s=M.preset(0);let chart=M.chartData(s);assert.equal(chart.valid,true);
+[21,46,0.85].forEach((v,i)=>approx(chart.cargo[i].saltContribution,v));
+[0.6,1.52,0.015].forEach((v,i)=>approx(chart.cargo[i].bswContribution,v));
+approx(chart.cargo.reduce((sum,c)=>sum+c.saltContribution,0),67.85);
+approx(chart.sensitivity.find(p=>p.efficiency===97).outlet,2.0355);
+approx(chart.sensitivity[0].outlet,6.785);
+assert.deepEqual(chart.buffer.at(-1),{day:5,required:150000});
+assert.equal(chart.coveragePercent,null);s.stock=90000;assert.equal(M.chartData(s).coveragePercent,60);
+s.stock=0;assert.equal(M.chartData(s).coveragePercent,0);
+s.ratios=[60,40,0];assert.equal(M.chartData(s).coveragePercent,null);
+s.buffer=0;assert.deepEqual(M.chartData(s).buffer,[]);
+s=M.preset(0);s.ratios=[60,40,10];chart=M.chartData(s);assert.equal(chart.valid,false);assert.deepEqual(chart.sensitivity,[]);assert.deepEqual(chart.cargo,[]);assert.equal(chart.scenarios.length,3);
+console.log('PASS: blend/supply formulas, strict limits, independent verification, chart contribution totals, sensitivity, buffer endpoints, missing and zero inventory.');
 

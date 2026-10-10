@@ -2,10 +2,11 @@
   "name": "solvent-t-dashboard",
   "version": "1.0.0",
   "private": true,
-  "description": "Dashboard SOLVENT T sesuai brief pemilihan crude, blending, pasokan dan stok.",
+  "description": "SOLVENT T by ZESKINDO — crude blending, salt screening, supply and inventory planning.",
   "scripts": {
+    "dev": "node server.cjs",
     "start": "node server.cjs",
     "test": "node verify.cjs",
-    "check": "node --check dist/app.js && node --check dist/model.js"
+    "check": "node --check dist/app.js && node --check dist/model.js && node --check dist/charts.js && node --check server.cjs"
   }
 }

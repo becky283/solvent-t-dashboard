@@ -1,71 +1,86 @@
-# SOLVENT T
+# SOLVENT T — ZESKINDO
 
-Dashboard prototipe sesuai SOLVENT_T_Dashboard_Brief.pdf. HTML, CSS, dan JavaScript biasa, tanpa build atau instalasi dependensi.
+A local, interactive workspace for crude selection, blending, salt screening, and supply planning. The interface uses English, a pale blue workspace, simple white panels, and a collapsible navigation sidebar.
 
-## Menjalankan
+## Run locally
 
-1. Buka folder ini di terminal.
-2. Jalankan `npm start` (Node.js diperlukan).
-3. Buka `http://127.0.0.1:4173`.
+Requires Node.js. No packages need to be installed.
 
-Alternatif: buka `dist/index.html` langsung di browser. Penyimpanan lokal mengikuti kebijakan browser untuk file lokal; gunakan server untuk perilaku penyimpanan yang konsisten. Font Google bersifat opsional, dengan fallback Arial bila offline.
+```powershell
+npm run dev
+```
 
-## Fitur sesuai brief
+Open http://localhost:4173/. The development server listens on the local machine only.
 
-| Kebutuhan | Implementasi |
-| --- | --- |
-| Dua tab, blend menjadi dasar pasokan | Pemilihan & blending / Pasokan & stok memakai state yang sama |
-| Cargo, supplier, garam, BS&W editable | Tabel mutu cargo, termasuk basis Case / Asumsi / Hasil uji |
-| Proporsi H/SH/L, kapasitas, efisiensi | Input angka dan slider; total harus 100%; efisiensi di bawah 100% |
-| Perhitungan langsung | Garam dan BS&W inlet, outlet prediksi, screening garam <2 PTB |
-| Status garam dan verifikasi terpisah | Screening garam + catatan hasil uji kompatibilitas, BS&W outlet, TAN, metal |
-| Pasokan harian | Kapasitas × proporsi H/SH/L |
-| Stok light | Target, cakupan, dan tambahan stok; stok aktual kosong sampai diisi |
-| Buffer dan catatan manual | Hari buffer, jadwal pengiriman, supplier cadangan, umur stok |
-| Bandingkan skenario | Tiga demo brief dan daftar snapshot pengguna |
-| Simpan lokal | Snapshot input, catatan, basis angka, dan verifikasi ke localStorage |
-| CSV | Skenario aktif, demo, dan tersimpan; beserta input, output, sumber angka, catatan |
-| Visual | Putih dan hijau, kartu angka, responsif, tanpa animasi |
-| Transparansi | Dialog rumus dan basis data; pembulatan hanya untuk tampilan |
+```powershell
+npm run check
+npm test
+```
 
-## Perhitungan dan validasi
+## Deploy to Vercel
 
-- Garam inlet = Σ(porsi volume × garam cargo).
-- BS&W inlet = Σ(porsi volume × BS&W cargo).
-- Outlet prediksi = garam inlet × (1 − efisiensi/100).
-- Kebutuhan crude/hari = kapasitas × proporsi/100.
-- Target light = kebutuhan light/hari × buffer.
-- Cakupan = stok layak pakai / kebutuhan light/hari, hanya saat light >0 dan stok sudah diisi.
-- Tambahan stok = maks(0, target − stok), hanya setelah stok diisi.
-- Input kosong wajib, input negatif, BS&W >100%, proporsi >100%, total bukan 100%, atau efisiensi ≥100% memblokir hasil, simpan, dan ekspor.
-- Status screening menggunakan angka penuh, bukan hasil pembulatan. Tepat 2 PTB tidak memenuhi batas <2 PTB.
-- BS&W outlet harus <0,05%; tepat 0,05% tidak memenuhi.
-- Perubahan blend, cargo atau proses mereset catatan verifikasi untuk menghindari pemakaian hasil uji lama.
+Import this directory as a project, select **Other** as the framework, leave the build command empty, and use **dist** as the output directory. The included `vercel.json` contains these settings. No environment variables or backend are required.
 
-## Angka demo terverifikasi
+## Dashboard features
 
-| Skenario | H/SH/L | Inlet | Outlet, efisiensi 97% |
-| --- | --- | --- | --- |
-| Awal | 50/40/10 | 67,85 PTB | 2,036 PTB |
-| Porsi SH dikurangi | 55/35/10 | 64,20 PTB | 1,926 PTB |
-| SH lebih bersih | 50/40/10 | 49,85 PTB | 1,496 PTB |
+- Edit H / SH / L volume shares, crude suppliers, salt, BS&W, processing capacity, and desalter efficiency.
+- Compare baseline, reduced super-heavy, and cleaner super-heavy scenarios.
+- Calculate daily demand, light inventory target, coverage, and additional inventory from the selected blend.
+- Record compatibility, outlet BS&W, TAN, and metals verification separately from salt screening.
+- Save named scenarios in browser storage and export the active, reference, and saved scenarios as an English CSV.
+- Keep shipment, backup supplier, and inventory age notes with each scenario.
 
-Awal: salt 42/115/8,5 PTB; BS&W 1,20/3,80/0,15%; kapasitas 300.000 bbl/hari. SH lebih bersih mengasumsikan salt SH 70 PTB dan BS&W 1,50%. Kebutuhan awal 150.000/120.000/30.000 bbl/hari, target light 150.000 bbl dengan buffer 5 hari. Stok 90.000 bbl memberi cakupan 3 hari dan tambahan 60.000 bbl.
+Inputs are labelled **Reference**, **Assumption**, or **Test result**. Edited numeric inputs become assumptions. Existing saved scenarios from the earlier interface retain their data and receive updated standard labels when loaded. User-entered names and notes are preserved.
 
-## Batas prototipe
+## Interactive charts
 
-Data stok dan cargo belum terhubung ke sistem operasional. Nama supplier awal adalah label case. Status hasil uji dicatat pengguna secara manual. Batas TAN dan metal harus dikonfirmasi terhadap unit; tidak diasumsikan oleh aplikasi. Screening garam tidak menetapkan kelayakan operasional blend. Kapasitas tangki perlu dikonfirmasi; buffer mengasumsikan pasokan domestik tetap masuk.
+The dashboard includes seven chart panels:
 
-Data localStorage tersimpan per browser/per alamat situs. Menghapus data browser menghapus skenario. CSV adalah ringkasan, bukan mekanisme impor. Tidak ada database, backend, atau optimasi margin pada versi awal ini.
+1. **Desalter sensitivity:** calculated outlet salt across a range of desalter efficiencies, with the current setting and the 2 PTB threshold marked.
+2. **Inlet contribution:** volume-weighted salt or BS&W contribution from each crude type.
+3. **Blend composition:** Heavy / Super-heavy / Light shares of total volume.
+4. **Scenario comparison:** predicted outlet salt for the selected inputs and the three reference scenarios.
+5. **Light buffer requirement:** cumulative light demand over the chosen buffer period, with usable inventory as an optional reference line.
+6. **Daily crude demand:** daily supply volume for each crude type.
+7. **Buffer coverage:** usable light inventory as a percentage of the target.
 
-## Struktur
+Charts update with the inputs and expose exact values in expandable tables. Cartesian charts support keyboard tooltips. Sensitivity and buffer series are calculated scenarios; they are not historical measurements. Buffer projection assumes constant demand and excludes future deliveries. Missing inventory remains unknown; zero inventory is a valid entered value. A coverage ring fills at 100%, while its displayed percentage can exceed 100%.
 
-- `dist/index.html`: antarmuka dan dialog.
-- `dist/styles.css`: visual dan breakpoint responsif.
-- `dist/model.js`: state awal, skenario demo, validasi, rumus.
-- `dist/app.js`: input, rendering, tab, simpan/muat, CSV, catatan uji.
-- `server.cjs`: server lokal sederhana menggunakan modul bawaan Node.js.
-- `verify.cjs`: pemeriksaan formula, demo, dan batas validasi; jalankan `npm test`.
-- `.openai/hosting.json`: konfigurasi publikasi Sites privat.
+React and Recharts are included in the local `charts-runtime.js` bundle. The app makes no CDN requests and needs no package installation. Third-party notices are included with the distribution.
+## Calculation basis
 
-Basis: brief SOLVENT T, Semifinal Case 2026, SOLVENT Track C Optimize, dan ZEKINDO Integrated Solution sebagaimana disebut dalam dokumen brief.
+The baseline follows the SOLVENT T dashboard brief:
+
+| Parameter | Heavy | Super-heavy | Light |
+| --- | ---: | ---: | ---: |
+| Volume share | 50% | 40% | 10% |
+| Salt, PTB | 42 | 115 | 8.5 |
+| BS&W | 1.2% | 3.8% | 0.15% |
+
+Capacity is 300,000 bbl/day. Assumed desalter efficiency is 97%; the light buffer is 5 days. Actual usable inventory starts blank.
+
+- Inlet salt = sum(volume fraction × cargo salt).
+- Inlet BS&W = sum(volume fraction × cargo BS&W).
+- Predicted outlet salt = inlet salt × (1 − efficiency fraction).
+- Daily crude demand = capacity × volume fraction.
+- Light inventory target = daily light demand × buffer days.
+- Coverage = usable light inventory / daily light demand, if demand is positive and inventory is entered.
+- Additional light inventory = max(0, target − usable inventory), once inventory is entered.
+
+Salt screening requires predicted outlet salt **strictly below 2 PTB**. Separate verification requires compatibility, outlet BS&W **strictly below 0.05%**, and TAN and metals within the unit's confirmed limits. Changing blend composition, cargo quality, or process assumptions clears the verification record. Rounding affects display only.
+
+This prototype uses manual input and browser storage. It has no live inventory connection or authentication. Saved scenarios belong to the browser and origin where they were created; export them before changing browsers or hosting locations.
+
+## Source files
+
+- `dist/index.html`: interface and dialogs.
+- `dist/styles.css`: blue visual system and responsive layout.
+- `dist/model.js`: calculations, validation, and reference scenarios.
+- `dist/app.js`: input handling, scenario storage, verification, and CSV export.
+- `dist/charts.js`: interactive React/Recharts chart components.
+- `dist/charts-runtime.js`: bundled chart dependencies.
+- `dist/THIRD_PARTY_NOTICES.txt`: bundled dependency licenses.
+- `server.cjs`: local static server.
+- `verify.cjs`: formula and boundary checks.
+- `vercel.json`: static deployment settings.
+
