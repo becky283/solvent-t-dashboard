@@ -1,4 +1,4 @@
-# SOLVENT T — ZESKINDO
+# SOLVENT T — ZEKINDO
 
 A local, interactive workspace for crude selection, blending, salt screening, and supply planning. The interface uses English, a pale blue workspace, simple white panels, and a collapsible navigation sidebar.
 

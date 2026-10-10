@@ -27,3 +27,7 @@ dialog{width:min(590px,calc(100vw - 32px));max-height:85vh;padding:26px;overflow
 .coverage-ring{width:100%}.chart-head p,.chart-note,.summary-panel p,.result-message{color:#788da7}.chart-values summary{color:#708aab}
 /* Anchor accessible table captions inside their own scroll containers. */
 .table-scroll,.chart-source-scroll{position:relative}
+
+.brand-logo{display:block;width:112px;height:112px;object-fit:contain;margin-bottom:14px;border-radius:3px}.nav-collapsed .brand-logo{width:45px;height:45px;margin-bottom:0}
+@media(max-width:760px){.brand-logo,.nav-collapsed .brand-logo{width:100px;height:100px;margin-bottom:14px}}
+
