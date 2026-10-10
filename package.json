@@ -1,0 +1,11 @@
+{
+  "name": "solvent-t-dashboard",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Dashboard SOLVENT T sesuai brief pemilihan crude, blending, pasokan dan stok.",
+  "scripts": {
+    "start": "node server.cjs",
+    "test": "node verify.cjs",
+    "check": "node --check dist/app.js && node --check dist/model.js"
+  }
+}
