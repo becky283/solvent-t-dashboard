@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "node server.cjs",
     "start": "node server.cjs",
-    "test": "node verify.cjs",
-    "check": "node --check dist/app.js && node --check dist/model.js && node --check dist/charts.js && node --check server.cjs"
+    "test": "node verify.cjs && node verify-operations.cjs",
+    "check": "node --check dist/app.js && node --check dist/model.js && node --check dist/charts.js && node --check dist/operations-model.js && node --check dist/operations-ui.js && node --check server.cjs"
   }
 }

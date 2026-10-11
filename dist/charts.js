@@ -47,7 +47,7 @@
   class Boundary extends React.Component{constructor(props){super(props);this.state={error:false};}static getDerivedStateFromError(){return {error:true};}render(){return this.state.error?e(Empty,null,'This chart is unavailable. Check the input values below.'):this.props.children;}}
   window.SolventCharts={render(state,result,view,onLoad){
     const s=M.clone(state),data=M.chartData(s,result),shared={s,r:result,data,onLoad};
-    const specs=view==='blend'?[['chart-desalter',Sensitivity],['chart-contribution',Contribution],['chart-mix',Mix],['chart-scenarios',Scenarios]]:[['chart-buffer',Buffer],['chart-daily',Daily],['chart-coverage',Coverage]];
+    const specs=!['blend','supply'].includes(view)?[]:view==='blend'?[['chart-desalter',Sensitivity],['chart-contribution',Contribution],['chart-mix',Mix],['chart-scenarios',Scenarios]]:[['chart-buffer',Buffer],['chart-daily',Daily],['chart-coverage',Coverage]];
     const active=new Set(specs.map(([id])=>id));
     for(const [id,root] of roots)if(!active.has(id)){root.unmount();roots.delete(id);}
     for(const [id,Component] of specs){const element=document.getElementById(id);if(!element)continue;let root=roots.get(id);if(!root){root=createRoot(element);roots.set(id,root);}element.dataset.queryId=id+'-current-inputs';root.render(e(Boundary,null,e(Component,shared)));}

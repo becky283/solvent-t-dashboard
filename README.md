@@ -84,3 +84,18 @@ This prototype uses manual input and browser storage. It has no live inventory c
 - `verify.cjs`: formula and boundary checks.
 - `vercel.json`: static deployment settings.
 
+
+## Cargo, clearance, and delivery records
+
+Three operational workflows extend the blending and supply calculator:
+
+- **Cargo passports:** a record per delivery assay, with salt, BS&W, TAN, viscosity and its test temperature, Ni + V, asphaltenes, and storage age at assay. Enter both contract and plant maxima, or explicitly mark a non-required limit N/A. Report date, report reference, and specification reference are required for a cleared quality status. Maxima are inclusive. Missing evidence stays pending; exceeded limits fail. Using an assay links its passport and copies supplier, salt, and BS&W into the blend.
+- **Plant clearance:** record fresh and aged compatibility tests, measured outlet salt and BS&W, measured TAN and Ni + V, report dates and references, and unit TAN / metals limits. Salt must be strictly below 2 PTB and BS&W strictly below 0.05%. The 1.5 PTB internal salt target is advisory. A complete release also requires predicted salt screening, valid selected cargo passports, confirmed primary supply for the planning window, and a plant approval with approver, date, and reference. This is a manual record of an approval; it does not authenticate or issue plant authorization.
+- **Suppliers and deliveries:** record primary deliveries and backups, linked cargo passport, nominated volume, confirmed volume, arrival date, and confirmed delivery slot. Supplier name and crude type must match the passport. Only quality-cleared and confirmed primary arrivals linked to the selected blend passports within the inclusive planning window count against capacity × crude share × planning days. Backups remain separate until promoted to primary; usable inventory is not included in this delivery comparison.
+
+Blend, cargo, or process edits clear fresh/aged tests and plant approval. Passport edits also clear test evidence. Delivery, planning-window, unit-limit, and sample-record edits clear approval. Reference blend changes keep the cargo and delivery register while resetting passport links and test records. Saved scenarios preserve their own full operational records. Legacy scenarios load with empty operational records and no assumed clearance.
+
+Save scenario retains all three workflows locally. Export CSV includes fresh/aged verification, plant release, measured salt, approval state, and a full operations snapshot in the Operations records (JSON) column. Legacy verification fields remain explicitly labelled for older records. No cargo, supplier, or approval data is sent to the hosting server.
+
+Additional source files: dist/operations-model.js, dist/operations-ui.js, dist/operations.css, and verify-operations.cjs.
+
